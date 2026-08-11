@@ -1,5 +1,3 @@
-// Backend base URL. In dev, Vite proxies /api to the Express server (see vite.config.js
-// if you add a proxy) — or set VITE_API_URL in a .env file for production.
 const APP_URL = typeof window !== "undefined" ? window.location.origin : "https://howindianareyou.app";
 
 export function buildShareText(score) {
@@ -8,11 +6,6 @@ export function buildShareText(score) {
 
 export function buildChallengeLink(score) {
   return `${APP_URL}/?challenge=${score}`;
-}
-
-export function buildWhatsAppUrl(score) {
-  const text = `${buildShareText(score)} ${buildChallengeLink(score)}`;
-  return `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
 export async function copyToClipboard(text) {
@@ -46,17 +39,6 @@ function canvasToBlob(canvas) {
   });
 }
 
-/**
- * Opens the device's native share sheet with the result-card image attached
- * whenever possible, so it can be dropped straight into WhatsApp Status,
- * Instagram Stories, or sent directly to a friend. Falls back to a text+link
- * share, and finally to clipboard, for browsers that don't support file
- * sharing (most desktop browsers).
- *
- * @param {number} score
- * @param {HTMLCanvasElement | null} canvas - the rendered result card, if available
- * @returns {Promise<boolean>} whether a share/copy action actually completed
- */
 export async function shareNative(score, canvas) {
   const text = buildShareText(score);
   const url = buildChallengeLink(score);
@@ -83,12 +65,10 @@ export async function shareNative(score, canvas) {
       return true;
     }
   } catch (err) {
-    // User cancelling the share sheet is not an error worth reporting.
     if (err?.name === "AbortError") return false;
     console.error("Native share failed, falling back to clipboard:", err);
   }
 
-  // Desktop / unsupported browsers: fall back to copying a shareable message.
   const ok = await copyToClipboard(`${text} ${url}`);
   if (ok) trackEvent("share_clicked", { score, method: "clipboard_fallback" });
   return ok;
@@ -104,6 +84,6 @@ export function trackEvent(name, params = {}) {
       console.debug("[track]", name, params);
     }
   } catch {
-    // Analytics failures should never break the app.
+    
   }
 }
