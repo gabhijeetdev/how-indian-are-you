@@ -1,64 +1,109 @@
 // Backend base URL. In dev, Vite proxies /api to the Express server (see vite.config.js
 // if you add a proxy) — or set VITE_API_URL in a .env file for production.
-const API_URL = import.meta.env.VITE_API_URL || "";
+const APP_URL = typeof window !== "undefined" ? window.location.origin : "https://howindianareyou.app";
 
 export function buildShareText(score) {
-  return `🇮🇳 I scored ${score}/10 on the *How Indian Are You?* challenge!\n\nThink you can beat me? 👀`;
+  return `I scored ${score}/10 on "How Indian Are You?" 🇮🇳 Think you can beat me?`;
+}
+
+export function buildChallengeLink(score) {
+  return `${APP_URL}/?challenge=${score}`;
 }
 
 export function buildWhatsAppUrl(score) {
-  return `https://wa.me/?text=${encodeURIComponent(buildShareText(score))}`;
-}
-
-export async function shareNative(score) {
-  if (navigator.share) {
-    try {
-      await navigator.share({ text: buildShareText(score), title: "How Indian Are You?" });
-      return true;
-    } catch {
-      return false; // user cancelled
-    }
-  }
-  return copyToClipboard(buildShareText(score));
+  const text = `${buildShareText(score)} ${buildChallengeLink(score)}`;
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
 export async function copyToClipboard(text) {
   try {
-    await navigator.clipboard.writeText(text);
-    return true;
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    return ok;
   } catch {
     return false;
   }
 }
 
-export function buildChallengeLink(score) {
-  try {
-    const url = new URL(window.location.href);
-    url.pathname = "/";
-    url.search = `?challenge=${score}`;
-    return `I scored ${score}/10 on How Indian Are You? Beat me: ${url.toString()}`;
-  } catch {
-    return `Play "How Indian Are You?" — I scored ${score}/10, beat me if you can! 🇮🇳`;
-  }
+function canvasToBlob(canvas) {
+  return new Promise((resolve) => {
+    if (!canvas) {
+      resolve(null);
+      return;
+    }
+    canvas.toBlob((blob) => resolve(blob), "image/png");
+  });
 }
 
 /**
- * Fire-and-forget anonymous analytics event. Never blocks the UI and never
- * throws — if the backend isn't deployed/reachable, this silently no-ops so
- * the quiz keeps working with zero backend dependency.
- * @param {string} event - e.g. "quiz_started", "question_answered"
- * @param {object} [payload]
+ * Opens the device's native share sheet with the result-card image attached
+ * whenever possible, so it can be dropped straight into WhatsApp Status,
+ * Instagram Stories, or sent directly to a friend. Falls back to a text+link
+ * share, and finally to clipboard, for browsers that don't support file
+ * sharing (most desktop browsers).
+ *
+ * @param {number} score
+ * @param {HTMLCanvasElement | null} canvas - the rendered result card, if available
+ * @returns {Promise<boolean>} whether a share/copy action actually completed
  */
-export function trackEvent(event, payload = {}) {
-  if (!API_URL) return;
+export async function shareNative(score, canvas) {
+  const text = buildShareText(score);
+  const url = buildChallengeLink(score);
+
   try {
-    fetch(`${API_URL}/api/analytics`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event, ...payload, timestamp: Date.now() }),
-      keepalive: true,
-    }).catch(() => {});
+    const blob = canvas ? await canvasToBlob(canvas) : null;
+
+    if (blob) {
+      const file = new File([blob], "how-indian-are-you.png", { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "How Indian Are You?",
+          text: `${text} ${url}`,
+        });
+        trackEvent("share_clicked", { score, method: "native_image" });
+        return true;
+      }
+    }
+
+    if (navigator.share) {
+      await navigator.share({ title: "How Indian Are You?", text, url });
+      trackEvent("share_clicked", { score, method: "native_text" });
+      return true;
+    }
+  } catch (err) {
+    // User cancelling the share sheet is not an error worth reporting.
+    if (err?.name === "AbortError") return false;
+    console.error("Native share failed, falling back to clipboard:", err);
+  }
+
+  // Desktop / unsupported browsers: fall back to copying a shareable message.
+  const ok = await copyToClipboard(`${text} ${url}`);
+  if (ok) trackEvent("share_clicked", { score, method: "clipboard_fallback" });
+  return ok;
+}
+
+export function trackEvent(name, params = {}) {
+  try {
+    if (typeof window !== "undefined" && typeof window.gtag === "function") {
+      window.gtag("event", name, params);
+    } else if (typeof window !== "undefined" && Array.isArray(window.dataLayer)) {
+      window.dataLayer.push({ event: name, ...params });
+    } else if (process.env.NODE_ENV !== "production") {
+      console.debug("[track]", name, params);
+    }
   } catch {
-    /* analytics must never break the app */
+    // Analytics failures should never break the app.
   }
 }

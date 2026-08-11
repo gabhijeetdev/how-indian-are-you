@@ -1,33 +1,50 @@
-// Reusable scoring utility. Keep this the single source of truth for
-// score -> badge mapping so Result.jsx and ResultCard.jsx never drift apart.
-
-export const BADGES = {
-  EXPLORER: { name: "INDIA EXPLORER", message: "There's still plenty of India left to discover!", emoji: "🧭" },
-  ENTHUSIAST: { name: "INDIA ENTHUSIAST", message: "You know your India pretty well!", emoji: "🌟" },
-  PROUD: { name: "PROUD INDIAN", message: "That's a solid score. 🇮🇳", emoji: "🏆" },
-  EXPERT: { name: "INDIA EXPERT", message: "Almost perfect. Impressive!", emoji: "🎯" },
-  MASTER: { name: "INDIA MASTER", message: "10/10! You really know your India.", emoji: "👑" },
-};
-
 /**
- * @param {number} score - 0 to 10
- * @returns {{name: string, message: string, emoji: string}}
+ * Badge tiers, ordered high -> low. `min` is inclusive.
+ * Messages are intentionally tuned: 8-10 = congratulatory, 5-7 = encouraging-positive,
+ * 0-4 = encouraging-motivational (never harsh — this is just for fun).
  */
+const BADGES = [
+  {
+    min: 9,
+    emoji: "🏆",
+    name: "India Expert",
+    message: "You know your India incredibly well! Keep exploring. Keep learning. Keep making India proud.",
+  },
+  {
+    min: 7,
+    emoji: "🎖️",
+    name: "Proud Patriot",
+    message: "Seriously impressive! You clearly know your country inside out — a couple more and you're a legend.",
+  },
+  {
+    min: 5,
+    emoji: "🌟",
+    name: "Rising Explorer",
+    message: "Solid effort! You know the basics well — a little more exploring and you'll be unstoppable.",
+  },
+  {
+    min: 3,
+    emoji: "🌱",
+    name: "Curious Beginner",
+    message: "A great start! There's so much more of India to discover — give it another shot and watch your score climb.",
+  },
+  {
+    min: 0,
+    emoji: "💡",
+    name: "India in the Making",
+    message: "Everyone starts somewhere! Take another crack at it — you'll surprise yourself next time.",
+  },
+];
+
 export function getBadge(score) {
-  if (score <= 3) return BADGES.EXPLORER;
-  if (score <= 6) return BADGES.ENTHUSIAST;
-  if (score <= 8) return BADGES.PROUD;
-  if (score === 9) return BADGES.EXPERT;
-  return BADGES.MASTER;
+  const clamped = Math.max(0, Math.min(10, Number(score) || 0));
+  return BADGES.find((b) => clamped >= b.min) ?? BADGES[BADGES.length - 1];
 }
 
-// Illustrative "anonymous percentile" — for fun, not a real statistical claim.
-const PERCENTILE_TABLE = { 0: 4, 1: 8, 2: 14, 3: 22, 4: 33, 5: 45, 6: 58, 7: 71, 8: 84, 9: 93, 10: 98 };
+/** Rough, deterministic "you scored higher than X% of players" figure. */
+const PERCENTILE_TABLE = [5, 12, 22, 34, 48, 61, 73, 84, 92, 97, 99];
 
-/**
- * @param {number} score - 0 to 10
- * @returns {number} percentile 0-100
- */
 export function getPercentile(score) {
-  return PERCENTILE_TABLE[score] ?? 50;
+  const clamped = Math.max(0, Math.min(10, Number(score) || 0));
+  return PERCENTILE_TABLE[clamped];
 }
