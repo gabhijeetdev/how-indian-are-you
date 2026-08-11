@@ -4,7 +4,13 @@ import React from "react";
 export function ChakraMotif({ size = 220, opacity = 0.06, style = {} }) {
   const spokes = Array.from({ length: 24 });
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100" style={{ opacity, ...style }} aria-hidden="true">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      style={{ opacity, pointerEvents: "none", ...style }}
+      aria-hidden="true"
+    >
       <circle cx="50" cy="50" r="46" fill="none" stroke="var(--chakra)" strokeWidth="2" />
       <circle cx="50" cy="50" r="6" fill="var(--chakra)" />
       {spokes.map((_, i) => (
