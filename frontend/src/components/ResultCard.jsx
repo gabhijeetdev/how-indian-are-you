@@ -43,9 +43,8 @@ export default function ResultCard({ score, badge, onReady }) {
 
       ctx.fillStyle = "#775533";
       ctx.font = "600 13px system-ui, -apple-system, sans-serif";
-      ctx.fillText("THE 60-SECOND INDIA CHALLENGE", width / 2, 78);
+      ctx.fillText("THE 60-SECOND CHALLENGE", width / 2, 78);
 
-      
       if (stambhImg) {
         ctx.save();
         ctx.globalAlpha = 0.95; 
@@ -58,23 +57,23 @@ export default function ResultCard({ score, badge, onReady }) {
       // 5. Score Section 
       ctx.fillStyle = "#FF9933";
       ctx.font = "bold 13px system-ui, -apple-system, sans-serif";
-      ctx.fillText("YOUR OFFICIAL SCORE", width / 2, 238);
+      ctx.fillText("YOUR SCORE", width / 2, 238);
 
       ctx.font = "900 68px system-ui, -apple-system, sans-serif";
       ctx.fillStyle = score >= 7 ? "#138808" : score >= 4 ? "#0B3D91" : "#D9534F";
       ctx.fillText(`${score} / 10`, width / 2, 290);
 
-      // 6. Central Badge Box (Dedicated Mid Section)
-      const badgeW = 360;
-      const badgeH = score >= 5 ? 80 : 64;
+      // 6. Central Badge Box (Reduced width, height, and font)
+      const badgeW = 280; // Reduced from 360
+      const badgeH = score >= 5 ? 54 : 48; // Reduced from 80 / 64
       const badgeX = (width - badgeW) / 2;
-      const badgeY = 345;
+      const badgeY = 350;
 
       // Badge Drop Shadow
       ctx.save();
-      ctx.shadowColor = "rgba(0, 0, 0, 0.25)";
-      ctx.shadowBlur = 18;
-      ctx.shadowOffsetY = 8;
+      ctx.shadowColor = "rgba(0, 0, 0, 0.22)";
+      ctx.shadowBlur = 14;
+      ctx.shadowOffsetY = 6;
 
       // Badge Border Gradient
       const borderGrad = ctx.createLinearGradient(badgeX, badgeY, badgeX + badgeW, badgeY + badgeH);
@@ -88,7 +87,7 @@ export default function ResultCard({ score, badge, onReady }) {
       }
       ctx.fillStyle = borderGrad;
       ctx.beginPath();
-      ctx.roundRect(badgeX - 3, badgeY - 3, badgeW + 6, badgeH + 6, 20);
+      ctx.roundRect(badgeX - 2.5, badgeY - 2.5, badgeW + 5, badgeH + 5, 16);
       ctx.fill();
       ctx.restore();
 
@@ -98,28 +97,13 @@ export default function ResultCard({ score, badge, onReady }) {
       badgeGrad.addColorStop(1, "#051D48");
       ctx.fillStyle = badgeGrad;
       ctx.beginPath();
-      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 18);
+      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 14);
       ctx.fill();
 
       // Badge Text
       ctx.fillStyle = score >= 7 ? "#FFD700" : "#FFFFFF";
-      ctx.font = "800 20px system-ui, -apple-system, sans-serif";
-      const badgeYText = score >= 5 ? badgeY + 28 : badgeY + 32;
-      ctx.fillText(`${badge.emoji}  ${badge.name}`.toUpperCase(), width / 2, badgeYText);
-
-      // Badge Subtag Pill
-      if (score >= 5) {
-        const tagW = 150;
-        const tagH = 24;
-        ctx.fillStyle = "#138808";
-        ctx.beginPath();
-        ctx.roundRect((width - tagW) / 2, badgeY + 46, tagW, tagH, 12);
-        ctx.fill();
-
-        ctx.fillStyle = "#FFFFFF";
-        ctx.font = "bold 11px system-ui, -apple-system, sans-serif";
-        ctx.fillText(badge.tag || "Great job!", width / 2, badgeY + 58);
-      }
+      ctx.font = "800 16px system-ui, -apple-system, sans-serif"; // Slightly smaller text fit
+      ctx.fillText(`${badge.emoji}  ${badge.name}`.toUpperCase(), width / 2, badgeY + badgeH / 2);
 
       // 7. Message Section (Dedicated Bottom Area)
       ctx.fillStyle = "#222222";
@@ -139,7 +123,7 @@ export default function ResultCard({ score, badge, onReady }) {
       }
       lines.push(line.trim());
 
-      const startY = 460;
+      const startY = 450;
       const lineHeight = 22;
       lines.forEach((l, index) => {
         ctx.fillText(l, width / 2, startY + index * lineHeight);

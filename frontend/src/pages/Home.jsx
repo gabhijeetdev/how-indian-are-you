@@ -43,13 +43,11 @@ export default function Home() {
         </div>
 
         <h1 className="display" style={{ fontSize: "clamp(32px, 8vw, 52px)", fontWeight: 800, lineHeight: 1.05, margin: "0 0 10px", letterSpacing: "-0.01em" }}>
-          HOW INDIAN
-          <br />
-          ARE YOU?
+          HOW WELL DO YOU KNOW INDIA?
         </h1>
 
         <p className="display" style={{ fontSize: "clamp(16px, 4vw, 20px)", fontWeight: 700, color: "var(--chakra)", margin: "0 0 6px" }}>
-          The 60-Second India Challenge
+          The 60-Second Challenge
         </p>
 
         <p style={{ color: "var(--ink-soft)", fontSize: 15, margin: "0 0 30px", fontWeight: 500 }}>10 Questions &bull; 60 Seconds &bull; One Badge</p>

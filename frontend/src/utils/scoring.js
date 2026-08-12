@@ -1,33 +1,17 @@
 const BADGES = [
   {
-    min: 9,
-    emoji: "🏆",
-    name: "🇮🇳 PROUDLY INDIAN",
-    message: "You know your India incredibly well! Keep exploring. Keep learning. Keep making India proud.",
-  },
-  {
     min: 7,
-    emoji: "🎖️",
-    name: "PROUDLY PATRIOT",
-    message: "Seriously impressive! You clearly know your country inside out — a couple more and you're a legend.",
-  },
-  {
-    min: 5,
-    emoji: "🌟",
-    name: "RISING EXPLORER",
-    message: "Solid effort! You know the basics well — a little more exploring and you'll be unstoppable.",
-  },
-  {
-    min: 3,
-    emoji: "🌱",
-    name: "CURIOUS BEGINNER",
-    message: "A great start! There's so much more of India to discover — give it another shot and watch your score climb.",
+    emoji: "🇮🇳 ",
+    name: "PROUDLY INDIAN",
+    message:
+      "You know your India incredibly well! Keep exploring, keep learning, and keep making India proud.",
   },
   {
     min: 0,
-    emoji: "💡",
-    name: "India in the Making",
-    message: "Everyone starts somewhere! Take another crack at it — you'll surprise yourself next time.",
+    emoji: "🇮🇳",
+    name: "PROUDLY INDIAN",
+    message:
+      "Great start! There’s so much more of India to discover. Keep exploring, keep learning",
   },
 ];
 
