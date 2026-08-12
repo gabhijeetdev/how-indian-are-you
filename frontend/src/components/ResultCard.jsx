@@ -39,23 +39,23 @@ export default function ResultCard({ score, badge, onReady }) {
       // 3. Header Text (Top Section)
       ctx.fillStyle = "#0B3D91";
       ctx.font = "900 26px system-ui, -apple-system, sans-serif";
-      ctx.fillText("HOW INDIAN ARE YOU?", width / 2, 52);
+      ctx.fillText("HOW WELL DO YOU KNOW INDIA?", width / 2, 52);
 
       ctx.fillStyle = "#775533";
       ctx.font = "600 13px system-ui, -apple-system, sans-serif";
       ctx.fillText("THE 60-SECOND INDIA CHALLENGE", width / 2, 78);
 
-      // 4. Standalone Ashok Stambh Emblem (Dedicated Center-Top Position)
+      
       if (stambhImg) {
         ctx.save();
-        ctx.globalAlpha = 0.95; // Fully clear and bright
+        ctx.globalAlpha = 0.95; 
         const imgW = 85;
         const imgH = 120;
         ctx.drawImage(stambhImg, (width - imgW) / 2, 98, imgW, imgH);
         ctx.restore();
       }
 
-      // 5. Score Section (Below Stambh to prevent any overlapping)
+      // 5. Score Section 
       ctx.fillStyle = "#FF9933";
       ctx.font = "bold 13px system-ui, -apple-system, sans-serif";
       ctx.fillText("YOUR OFFICIAL SCORE", width / 2, 238);

@@ -1,7 +1,7 @@
 const APP_URL = typeof window !== "undefined" ? window.location.origin : "https://howindianareyou.app";
 
 export function buildShareText(score) {
-  return `I scored ${score}/10 on "How Indian Are You?" 🇮🇳 Think you can beat me?`;
+  return `I scored ${score}/10 on "HOW WELL DO YOU KNOW INDIA?" 🇮🇳 Think you can beat me?`;
 }
 
 export function buildChallengeLink(score) {

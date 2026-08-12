@@ -61,7 +61,7 @@ export default function Home() {
         <p style={{ marginTop: 16, fontSize: 13, color: "var(--ink-soft)", fontWeight: 500 }}>No Login &bull; Free &bull; Just for Fun</p>
 
         <p style={{ marginTop: 40, fontSize: 12, color: "var(--ink-soft)", maxWidth: 320, opacity: 0.8 }}>
-          A lighthearted trivia challenge for Independence Day — not a citizenship test of any kind.
+          A lighthearted trivia challenge for Independence Day .
         </p>
       </div>
     </div>
