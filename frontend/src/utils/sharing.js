@@ -51,7 +51,7 @@ export async function shareNative(score, canvas) {
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: "How Indian Are You?",
+          title: "HOW WELL DO YOU KNOW INDIA?",
           text: `${text} ${url}`,
         });
         trackEvent("share_clicked", { score, method: "native_image" });
